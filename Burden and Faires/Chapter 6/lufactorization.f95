@@ -1,0 +1,75 @@
+program lu
+    implicit none
+    integer, parameter::n=3
+    real a(n,n),l(n,n),u(n,n),dum,dums
+    integer i,j,k
+
+    a(1,1)=2
+    a(1,2)=-1
+    a(1,3)=1
+    a(2,1)=3
+    a(2,2)=3
+    a(2,3)=9
+    a(3,1)=3
+    a(3,2)=3
+    a(3,3)=5
+    l(1,1)=1
+    l(2,2)=1
+    l(3,3)=1
+
+    u(1,1)=a(1,1)/l(1,1)
+
+
+    if(l(1,1)*u(1,1)==0) then
+        write(*,*) 'factorization impossible'
+        stop
+    endif
+
+    do j=2,n,1
+        u(1,j)=a(1,j)/l(1,1)
+        l(j,1)=a(j,1)/u(1,1)
+    enddo
+
+    do i=2,n-1,1
+        dum=0
+        do j=1,i-1,1
+            dum=dum+l(i,j)*u(j,i)
+        enddo
+        u(i,i)=(a(i,i)-dum)/l(i,i)
+            if(l(i,i)*u(i,i)==0) then
+                write(*,*) 'factorization impossible'
+                stop
+            endif
+
+            do j=i+1,n,1
+                dum=0
+                dums=0
+                do k=1,i-1,1
+                    dum=dum+l(i,k)*u(k,j)
+                    dums=dums+l(j,k)*u(k,i)
+                enddo
+                u(i,j)=(1/l(i,i))*(a(i,j)-dum)
+                l(j,i)=(1/u(i,i))*(a(j,i)-dums)
+            enddo
+
+    enddo
+    dum=0
+    do k=1,n-1,1
+        dum=dum+l(n,k)*u(k,n)
+    enddo
+    u(n,n)=(a(n,n)-dum)/l(n,n)
+    do i=1,n,1
+        do j=1,n,1
+            write(*,*) l(i,j)
+        enddo
+        write(*,*) '_________'
+    enddo
+    write(*,*) '==========='
+    do i=1,n,1
+        do j=1,n,1
+            write(*,*) u(i,j)
+        enddo
+        write(*,*) '_________'
+    enddo
+
+endprogram
